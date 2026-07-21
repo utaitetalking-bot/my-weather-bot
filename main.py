@@ -51,18 +51,18 @@ async def on_message(message):
             await message.channel.send(f"❌ 「{target_area}」はお天気リストに見つかりません。都道府県名や有名な主要都市名（例: 大阪、札幌、那覇）を漢字で入力してください。")
             return
             
-        # 国内専用の超高速・高安定天気APIサーバーへアクセス
-        url = f"https://tsukumijima.net{area_code}"
+        # URLの記号ズレが絶対に起きないように、あらかじめスラッシュを結合して指定
+        url = "https://tsukumijima.net" + area_code
         
         try:
             res = requests.get(url).json()
             forecasts = res["forecasts"]
-            today = forecasts[0]  # 今日のデータをピンポイント指定
+            today = forecasts[0]  # 今日のデータを指定
             
             date_label = today["dateLabel"]
             telop = today["telop"]
             
-            # 気温データの抽出（データが存在しない場合のNULLチェックを徹底）
+            # 気温データの抽出（NULLチェック）
             temp = today["temperature"]
             max_t = temp["max"]["celsius"] if temp.get("max") and temp["max"].get("celsius") else "--"
             min_t = temp["min"]["celsius"] if temp.get("min") and temp["min"].get("celsius") else "--"
